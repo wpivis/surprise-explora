@@ -1,0 +1,14 @@
+{
+	"scripts": {
+		"dev": "yarn run build -- --sourcemap=inline --watch",
+		"build": "esbuild js/widget.jsx --minify --format=esm --bundle --outdir=src/surprise_explora/static"
+	},
+	"dependencies": {
+		"@anywidget/react": "^0.1.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
+	},
+	"devDependencies": {
+		"esbuild": "^0.24.0"
+	}
+}
