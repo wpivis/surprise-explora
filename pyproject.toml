@@ -15,6 +15,8 @@ dependencies = [
     "vegafusion-python-embed>=1.6.9",
     "vegafusion>=2.0.1",
     "vl-convert-python>=1.7.0",
+    "rpy2>=3.5.17",
+    "tidycensus>=0.0.5",
 ]
 readme = "README.md"
 
