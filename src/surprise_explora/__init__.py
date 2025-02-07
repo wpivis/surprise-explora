@@ -3,7 +3,7 @@ import pathlib
 import numpy as np
 import scipy.stats as stats
 import altair as alt
-
+import pandas as pd
 import anywidget
 import traitlets
 
@@ -110,6 +110,8 @@ class Surprise:
         self.df["global_surprise"] = self.global_group.surprise
 
     def bar_chart(self, state: str):
+        self.surprise_keys.append("global_surprise")
+        average_rate = self.df["global_rate"].mean()
         df_long = self.df.melt(
             id_vars=["name", "state"],
             value_vars=self.surprise_keys,
@@ -117,26 +119,32 @@ class Surprise:
             value_name="Surprise",
         )
 
-        df_filtered = df_long[df_long["state"] == state]
+        df_filtered = df_long[df_long["state"] == state]      
 
-        chart = (
-            alt.Chart(df_filtered)
+        bar_chart = (
+            alt.Chart()
             .mark_bar(size=15)
             .encode(
                 x=alt.X("Group:N"),
                 y=alt.Y("Surprise:Q").scale(domain=[-0.125, 0.125]),
                 color="Group:N",
-                # tooltip=[
-                # alt.Tooltip("Surprise:Q", format=".3f"),
-                # alt.Tooltip("ConditionalRace:N", title="Race Group"),
-                # ],
+                tooltip=[
+                alt.Tooltip("Surprise:Q", format=".3f"),
+                alt.Tooltip("Group:N", title="Race Group"),
+                ],
             )
-            # .transform_calculate(
-            #     ConditionalRace="datum['Race Group'] === 'l' ? 'Hispanic' : (datum['Race Group'] === 'b' ? 'Black' : 'White')"
-            # )
+            .transform_filter(alt.datum.Group != "global_surprise")
             .properties(width=200, height=200)
-            .facet(facet="name:N", columns=5)
-            .interactive()
         )
 
-        return chart
+        line_chart = (
+            alt.Chart()
+            .mark_rule(color="black", strokeWidth=1, strokeDash=[2, 2])  
+            .encode(
+                y=alt.Y("Surprise:Q")
+            ).transform_filter(alt.datum.Group == "global_surprise")
+        )
+        
+        layered_chart = (bar_chart + line_chart).facet(facet="name:N", columns=5, data=df_filtered).interactive()
+
+        return layered_chart
