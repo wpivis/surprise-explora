@@ -148,3 +148,51 @@ class Surprise:
         layered_chart = (bar_chart + line_chart).facet(facet="name:N", columns=5, data=df_filtered).interactive()
 
         return layered_chart
+
+    def funnel_plot(self, key:str):
+        _df = self.df.copy()
+
+        key_rate = f'{key}_rate'
+        key_pop = f'{key}_pop'
+        key_zScore = f'{key}_zScore'
+        key_surprise = f'{key}_surprise'
+
+        rate_mean = _df[key_rate].mean()
+        std_dev = _df[key_rate].std()
+        totalPop = _df[key_pop].sum()
+
+
+        _df['n'] = _df[key_pop] / totalPop
+        _df['ci'] = (1.96 * std_dev) / np.sqrt(_df['n'])
+        _df['lcl95'] = rate_mean - _df['ci']
+        _df['ucl95'] = rate_mean + _df['ci']
+
+        maxYCutoff = max(abs(_df[key_zScore])) * 2
+        g_df = _df[(_df['lcl95'] > -(maxYCutoff)) & (_df['ucl95'] < (maxYCutoff))]
+
+        max_surprise = _df[key_surprise].max()
+        min_surprise = _df[key_surprise].min()
+        abs_max = max(abs(max_surprise), abs(min_surprise))
+
+        # Lower confidence interval line
+        ci_lower = alt.Chart(g_df).mark_line(color='black').encode(
+            x=key_pop,
+            y='lcl95'
+        )
+
+        # Upper confidence interval line
+        ci_upper = alt.Chart(g_df).mark_line(color='black').encode(
+            x=key_pop,
+            y='ucl95'
+        )
+
+        chart = alt.Chart(_df).mark_circle(size=60).encode(
+            x=key_pop,
+            y=key_zScore,
+            color=alt.Color(key_surprise, scale=alt.Scale(scheme='redblue', domainMid=0, domain=[-abs_max, abs_max])),
+            tooltip=['name', key_surprise]
+        ).properties(
+            width=800,
+            height=400
+        )
+        return chart + ci_lower + ci_upper
