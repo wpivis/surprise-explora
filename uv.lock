@@ -1196,6 +1196,18 @@ wheels = [
 ]
 
 [[package]]
+name = "rpy2"
+version = "3.5.17"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cffi" },
+    { name = "jinja2" },
+    { name = "packaging", marker = "sys_platform == 'win32'" },
+    { name = "tzlocal" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/65/85/f3bf48052106fd93e74bea512a43d3de48617953cba7e6dd40e8626f27f5/rpy2-3.5.17.tar.gz", hash = "sha256:dbff08c30f3d79161922623858a5b3b68a3fba8ee1747d6af41bc4ba68f3d582", size = 220963 }
+
+[[package]]
 name = "scikit-learn"
 version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1312,7 +1324,9 @@ dependencies = [
     { name = "anywidget" },
     { name = "numpy" },
     { name = "pandas" },
+    { name = "rpy2" },
     { name = "scikit-learn" },
+    { name = "tidycensus" },
     { name = "vega-datasets" },
     { name = "vegafusion" },
     { name = "vegafusion-python-embed" },
@@ -1338,7 +1352,9 @@ requires-dist = [
     { name = "jupyterlab", marker = "extra == 'dev'" },
     { name = "numpy", specifier = ">=2.2.2" },
     { name = "pandas", specifier = ">=2.2.3" },
+    { name = "rpy2", specifier = ">=3.5.17" },
     { name = "scikit-learn", specifier = ">=1.6.1" },
+    { name = "tidycensus", specifier = ">=0.0.5" },
     { name = "vega-datasets", specifier = ">=0.9.0" },
     { name = "vegafusion", specifier = ">=2.0.1" },
     { name = "vegafusion-python-embed", specifier = ">=1.6.9" },
@@ -1373,6 +1389,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/bd/55/b5148dcbf72f5cde221f8bfe3b6a540da7aa1842f6b491ad979a6c8b84af/threadpoolctl-3.5.0.tar.gz", hash = "sha256:082433502dd922bf738de0d8bcc4fdcbf0979ff44c42bd40f5af8a282f6fa107", size = 41936 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/2c/ffbf7a134b9ab11a67b0cf0726453cedd9c5043a4fe7a35d1cefa9a1bcfb/threadpoolctl-3.5.0-py3-none-any.whl", hash = "sha256:56c1e26c150397e58c4926da8eeee87533b1e32bef131bd4bf6a2f45f3185467", size = 18414 },
+]
+
+[[package]]
+name = "tidycensus"
+version = "0.0.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b2/1c/f6cbdd307637c191bd9b26162b897d5e009a32f869ae35343a14264c156c/tidycensus-0.0.5.tar.gz", hash = "sha256:d08a534a95991e8e6c3679d9b25baccc321eaf0fa19157804277219e9350cf96", size = 4462 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cd/85/c9762f04b7309f2c5025e6b0c564ff3106766f87e0eb65aa06efc2d3dbcc/tidycensus-0.0.5-py3-none-any.whl", hash = "sha256:6453e8e7ca3bd72130123885a123ede1b97d17340d3f70b8fa1d8794a2fb2260", size = 5547 },
 ]
 
 [[package]]
@@ -1439,6 +1464,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/43/0f/fa4723f22942480be4ca9527bbde8d43f6c3f2fe8412f00e7f5f6746bc8b/tzdata-2025.1.tar.gz", hash = "sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694", size = 194950 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0f/dd/84f10e23edd882c6f968c21c2434fe67bd4a528967067515feca9e611e5e/tzdata-2025.1-py2.py3-none-any.whl", hash = "sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639", size = 346762 },
+]
+
+[[package]]
+name = "tzlocal"
+version = "5.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/04/d3/c19d65ae67636fe63953b20c2e4a8ced4497ea232c43ff8d01db16de8dc0/tzlocal-5.2.tar.gz", hash = "sha256:8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e", size = 30201 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/97/3f/c4c51c55ff8487f2e6d0e618dba917e3c3ee2caae6cf0fbb59c9b1876f2e/tzlocal-5.2-py3-none-any.whl", hash = "sha256:49816ef2fe65ea8ac19d19aa7a1ae0551c834303d5014c6d5a62e4cbda8047b8", size = 17859 },
 ]
 
 [[package]]
