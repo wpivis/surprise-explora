@@ -152,7 +152,7 @@ class Surprise:
 
         return layered_chart
 
-    def funnel_plot(self, key:str, data: pd.DataFrame):
+    def funnel_plot(self, key:str, data: pd.DataFrame, axis: str):
         if data is None or data.empty:
             _df = self.df.copy()
         else: 
@@ -162,6 +162,7 @@ class Surprise:
         key_pop = f'{key}_pop'
         key_zScore = f'{key}_zScore'
         key_surprise = f'{key}_surprise'
+        key_axis = f'{key}_{axis}'
 
         rate_mean = _df[key_rate].mean()
         std_dev = _df[key_rate].std()
@@ -172,7 +173,7 @@ class Surprise:
         _df['lcl95'] = rate_mean - _df['ci']
         _df['ucl95'] = rate_mean + _df['ci']
         
-        maxYCutoff = max(abs(_df[key_zScore]))
+        maxYCutoff = max(abs(_df[key_axis]))
         g_df = _df[(_df['lcl95'] > -(maxYCutoff)) & (_df['ucl95'] < (maxYCutoff))]
 
         max_surprise = _df[key_surprise].max()
@@ -193,7 +194,7 @@ class Surprise:
 
         chart = alt.Chart(_df).mark_circle(size=60).encode(
             x=key_pop,
-            y=key_zScore,
+            y=key_axis,
             color=alt.Color(key_surprise, scale=alt.Scale(scheme='redblue', domainMid=0, domain=[-abs_max, abs_max])),
             tooltip=['name', 'state', key_surprise, key_rate, key_pop]
         ).properties(
