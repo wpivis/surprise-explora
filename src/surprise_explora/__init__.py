@@ -113,14 +113,14 @@ class Surprise:
         self.surprise_keys.append("global_surprise")
         average_rate = self.df["global_rate"].mean()
         df_long = self.df.melt(
-            id_vars=["name", "state"],
+            id_vars=["name", "state"] + self.rate_keys + self.population_keys,
             value_vars=self.surprise_keys,
             var_name="Group",
             value_name="Surprise",
         )
 
         df_filtered = df_long[df_long["state"] == state]      
-
+        
         bar_chart = (
             alt.Chart()
             .mark_bar(size=15)
@@ -129,9 +129,13 @@ class Surprise:
                 y=alt.Y("Surprise:Q").scale(domain=[-0.125, 0.125]),
                 color="Group:N",
                 tooltip=[
-                alt.Tooltip("Surprise:Q", format=".3f"),
                 alt.Tooltip("Group:N", title="Race Group"),
-                ],
+                alt.Tooltip("Surprise:Q", format=".3f"),
+                alt.Tooltip("rate:Q", format=".2f", title="Group Rate"),
+                alt.Tooltip("population:Q", title="Group Population")])
+            .transform_calculate(
+                rate="datum[split(datum.Group, '_')[0] + '_rate']",
+                population="datum[split(datum.Group, '_')[0] + '_pop']"
             )
             .transform_filter(alt.datum.Group != "global_surprise")
             .properties(width=200, height=200)
@@ -144,13 +148,15 @@ class Surprise:
                 y=alt.Y("Surprise:Q")
             ).transform_filter(alt.datum.Group == "global_surprise")
         )
-        
         layered_chart = (bar_chart + line_chart).facet(facet="name:N", columns=5, data=df_filtered).interactive()
 
         return layered_chart
 
-    def funnel_plot(self, key:str):
-        _df = self.df.copy()
+    def funnel_plot(self, key:str, data: pd.DataFrame):
+        if data is None or data.empty:
+            _df = self.df.copy()
+        else: 
+            _df = data.copy()
 
         key_rate = f'{key}_rate'
         key_pop = f'{key}_pop'
@@ -159,15 +165,14 @@ class Surprise:
 
         rate_mean = _df[key_rate].mean()
         std_dev = _df[key_rate].std()
-        totalPop = _df[key_pop].sum()
+        totalPopulation = _df[key_pop].sum()
 
-
-        _df['n'] = _df[key_pop] / totalPop
-        _df['ci'] = (1.96 * std_dev) / np.sqrt(_df['n'])
+        _df['n'] = _df[key_pop] / totalPopulation
+        _df['ci'] = (1.96 * std_dev) / (_df['n'] ** 0.5)
         _df['lcl95'] = rate_mean - _df['ci']
         _df['ucl95'] = rate_mean + _df['ci']
-
-        maxYCutoff = max(abs(_df[key_zScore])) * 2
+        
+        maxYCutoff = max(abs(_df[key_zScore]))
         g_df = _df[(_df['lcl95'] > -(maxYCutoff)) & (_df['ucl95'] < (maxYCutoff))]
 
         max_surprise = _df[key_surprise].max()
@@ -180,7 +185,7 @@ class Surprise:
             y='lcl95'
         )
 
-        # Upper confidence interval line
+        #Upper confidence interval line
         ci_upper = alt.Chart(g_df).mark_line(color='black').encode(
             x=key_pop,
             y='ucl95'
@@ -190,9 +195,9 @@ class Surprise:
             x=key_pop,
             y=key_zScore,
             color=alt.Color(key_surprise, scale=alt.Scale(scheme='redblue', domainMid=0, domain=[-abs_max, abs_max])),
-            tooltip=['name', key_surprise]
+            tooltip=['name', 'state', key_surprise, key_rate, key_pop]
         ).properties(
             width=800,
             height=400
         )
-        return chart + ci_lower + ci_upper
+        return (chart + ci_lower + ci_upper)
