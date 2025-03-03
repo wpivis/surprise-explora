@@ -152,7 +152,7 @@ class Surprise:
 
         return layered_chart
 
-    def funnel_plot(self, key:str, data: pd.DataFrame, axis: str):
+    def funnel_plot(self, key:str, data: pd.DataFrame = None, axis: str = "zScore"):
         if data is None or data.empty:
             _df = self.df.copy()
         else: 
